@@ -21,12 +21,12 @@
 
 		<script src="js-libs/three.js"></script>
 		/*<script src="js-libs/Detector.js"></script>
-		<script src="js-libs/stats.min.js"></script>*/
+		//<script src="js-libs/stats.min.js"></script>*/
 		<script src="js-libs/dat.gui.min.js"></script>
 		<script src="js-libs/GPUComputationRenderer.js"></script>
-		/*<script src="js-libs/FirstPersonControls.js"></script>
+		<script src="js-libs/FirstPersonControls.js"></script>
 		<script src="js-libs/OrbitControls.js"></script>
-		<script src="js-libs/KeyboardState.js"></script>*/
+		<script src="js-libs/KeyboardState.js"></script>
 
 		<!-- fragment shader for bird's position -->
 		<script id="BoidPositionFragmentShader" >
@@ -335,15 +335,15 @@
 		        renderer.shadowMapEnabled= true;
 		        renderer.shadowMapSoft = true;
 				
-			//    controls = new THREE.OrbitControls( camera, renderer.domElement );
-			 //   controls.addEventListener( 'change', render );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			controls.addEventListener( 'change', render );
 			                
 			    camera.position.x = 300;
 			    camera.position.y = 300;
 			    camera.position.z = 300; 
 			    camera.lookAt(scene.position);
 
-		   /*     guiControls = new function(){
+		        guiControls = new function(){
 		            this.rotationX  = 0.0;
 		            this.rotationY  = 0.0;
 		            this.rotationZ  = 0.0;
@@ -362,7 +362,7 @@
 		            this.shadowMapHeight=512;
 		            this.shadowBias=0.00;
 		            this.shadowDarkness=0.11;       
-		        } */
+		        } 
 
 		        spotLight = new THREE.SpotLight(0xffffff);
 		        spotLight.castShadow = true;
@@ -382,8 +382,8 @@
 				container.appendChild( renderer.domElement );
 				initComputeRenderer();
 
-				stats = new Stats();
-				container.appendChild( stats.dom );
+				//stats = new Stats();
+				//container.appendChild( stats.dom );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
@@ -537,7 +537,7 @@
 			function animate() {
 				requestAnimationFrame( animate );
 				render();
-				stats.update();
+				//stats.update();
 			}
 
 			function render() {
@@ -566,6 +566,14 @@
 
 				renderer.render( scene, camera );
 			}
+
+			function onWindowResize() {
+    				camera.aspect = window.innerWidth / window.innerHeight;
+    				camera.updateProjectionMatrix();
+    				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+
+			window.addEventListener('resize', onWindowResize, false);
 		</script>
 	</body>
 </html>
