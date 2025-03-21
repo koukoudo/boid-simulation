@@ -87,48 +87,6 @@
 				vec3 selfPosition = texture2D( PositionTexture, textcoordi ).xyz;
 				vec3 selfVelocity = texture2D( VeloctiyTexture, textcoordi ).xyz;
 
-				// FLY TOWARDS MOUSE
-				vec3 predatorPosition = predator;
-			    vec3 directionToPredator = predatorPosition - selfPosition;
-			    directionToPredator.z = 0.0;
-
-			    float distanceToPredator = length(directionToPredator);
-			    vec3 followForce = vec3(0.0);
-
-			    float followRadius = 250.0; // Slightly increased follow radius
-
-			    if (distanceToPredator < followRadius && distanceToPredator > 0.0) {
-			        float influence = 1.0 - (distanceToPredator / followRadius);
-			        influence = smoothstep(0.0, 1.0, influence);
-
-			        // Depth-aware scaling
-			        float depth = length(selfPosition - cameraPosition);
-			        followForce = normalize(directionToPredator) * influence * del_change * 40.0 * (1.0 + depth * 0.0003); // Slightly increased force and depth scaling
-			    }
-
-			    selfVelocity += followForce;
-
-				// FLY AWAY FROM PREDATOR (MOUSE)
-				// vec3 predatorPosition = predator;
-				// vec3 directionToPredator = selfPosition - predatorPosition;
-				// directionToPredator.z = 0.0;
-
-				// float distanceToPredator = length(directionToPredator);
-				// vec3 avoidanceForce = vec3(0.0);
-
-				// float avoidanceRadius = 200.0; // Increased radius for localized effect
-
-				// if (distanceToPredator < avoidanceRadius && distanceToPredator > 0.0) {
-				//     float influence = 1.0 - (distanceToPredator / avoidanceRadius); // Gradual influence
-				//     influence = smoothstep(0.0, 0.8, influence); // Smooth transition
-
-				//     // Depth-aware scaling
-				//     float depth = length(selfPosition - cameraPosition);
-				//     avoidanceForce = normalize(directionToPredator) * influence * del_change * 150.0 * (1.0 + depth * 0.001); // Reduced strength
-				// }
-
-				// selfVelocity += avoidanceForce;
-
 				float dist;
 				vec3 dir;
 				float distSquared;
@@ -427,14 +385,14 @@
 				//stats = new Stats();
 				//container.appendChild( stats.dom );
 
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+				// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				// document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				// document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
 				// var gui = new dat.GUI();
 
 
-				var controller_variables = { seperation: 20.0, alignment: 30.0, cohesion: 20.0, freedom: 0.3 };
+				var controller_variables = { seperation: 20.0, alignment: 30.0, cohesion: 40.0, freedom: 0.3 };
 
 				var new_values_update = function() {
 					uniform_velocity.seperation_distance.value = controller_variables.seperation;
@@ -584,27 +542,29 @@
 
 			function render() {
 			    var now = performance.now();
-			    var del_change = (now - last) / 1000;
+				var del_change = (now - last) / 1000;
 
-			    if (del_change > 1) del_change = 1; // safety cap on large del_changes
-			    last = now;
+				if (del_change > 1) del_change = 1; // safety cap on large del_changes
+				last = now;
 
-			    uniform_position.clock.value = now;
-			    uniform_position.del_change.value = del_change;
-			    uniform_velocity.clock.value = now;
-			    uniform_velocity.del_change.value = del_change;
-			    uniform_bird.clock.value = now;
-			    uniform_bird.del_change.value = del_change;
+				uniform_position.clock.value = now;
+				uniform_position.del_change.value = del_change;
+				uniform_velocity.clock.value = now;
+				uniform_velocity.del_change.value = del_change;
+				uniform_bird.clock.value = now;
+				uniform_bird.del_change.value = del_change;
 
-			    // Use mouse coordinates directly for predator uniform
-			    uniform_velocity.predator.value.set( 0.5 * mouseX / half_resolution_windowX * bounds, - 0.5 * mouseY / half_resolution_windowY * bounds, 0 );
+				uniform_velocity.predator.value.set( 0.5 * mouseX / half_resolution_windowX, - 0.5 * mouseY / half_resolution_windowY, 0 );
 
-			    gpu_allocation.compute();
+				mouseX = 10000;
+				mouseY = 10000;
 
-			    uniform_bird.PositionTexture.value = gpu_allocation.getCurrentRenderTarget( position_variable ).texture;
-			    uniform_bird.VeloctiyTexture.value = gpu_allocation.getCurrentRenderTarget( velocity_variable ).texture;
+				gpu_allocation.compute();
 
-			    renderer.render( scene, camera );
+				uniform_bird.PositionTexture.value = gpu_allocation.getCurrentRenderTarget( position_variable ).texture;
+				uniform_bird.VeloctiyTexture.value = gpu_allocation.getCurrentRenderTarget( velocity_variable ).texture;
+
+				renderer.render( scene, camera );
 			}
 
 			function onWindowResize() {
