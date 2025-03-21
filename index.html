@@ -326,11 +326,11 @@
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
 
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xf5faf5);
+				//scene.background = new THREE.Color( 0xf5faf5);
 				scene.fog = new THREE.Fog( 0x87ceeb, 100, 1000 );
 
-			    renderer = new THREE.WebGLRenderer({antialias:true});
-		        renderer.setClearColor(0x66C2FF);
+			    renderer = new THREE.WebGLRenderer({antialias:true, alpha: true });
+		        //renderer.setClearColor(0x66C2FF);
 		        renderer.setSize(window.innerWidth, window.innerHeight);
 		        renderer.shadowMapEnabled= true;
 		        renderer.shadowMapSoft = true;
